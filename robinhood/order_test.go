@@ -3,25 +3,28 @@ package robinhood
 import (
 	"os"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-func TestOauthPassword(t *testing.T) {
+func TestRecentOrders(t *testing.T) {
 	if os.Getenv("ROBINHOOD_USERNAME") == "" {
 		t.Skip("No username set")
 		return
 	}
-	asrt := assert.New(t)
-
 	o := &CredsCacher{
 		Creds: &OAuth{
 			Username: os.Getenv("ROBINHOOD_USERNAME"),
 			Password: os.Getenv("ROBINHOOD_PASSWORD"),
 		},
 	}
-
-	tok, err := o.Token()
-	asrt.NoError(err)
-	asrt.NotNil(tok)
+	c, err := Dial(&CredsCacher{Creds: o})
+	if err != nil {
+		t.Errorf("%v", err)
+		return
+	}
+	res, err := c.RecentOrders()
+	if err != nil {
+		t.Errorf("%v", err)
+		return
+	}
+	_ = len(res)
 }

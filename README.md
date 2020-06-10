@@ -1,8 +1,12 @@
-[![GoDoc](https://godoc.org/astuart.co/go-robinhood?status.svg)](https://godoc.org/astuart.co/go-robinhood)
+# Robinhood Client
 
-# Robinhood the rich and feeding the poor, now automated
+## About
 
-> Even though robinhood makes me poor
+This client library is based on [`github.com/andrewstuart/go-robinhood`](https://github.com/andrewstuart/go-robinhood/blob/master/README.md). The major differences are:
+
+- Uses OpenAPI generated structs
+- Conforms to Robinhood's API, which means most fields will be treated as a `string` type.
+- Includes more testing
 
 ## Notice
 
@@ -31,11 +35,7 @@ o, err := cli.Order(i, robinhood.OrderOpts{
 
 //err
 
-time.Sleep(5*time.Second) //Let me think about it some more...
-
-//Ah crap, I need to buy groceries.
-
-err := o.Cancel()
+err := cli.CancelOrder(o)
 
 if err != nil {
   //Oh well

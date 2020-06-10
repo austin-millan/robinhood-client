@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	model "gitlab.com/brokerage-api/robinhood-openapi/openapi"
 	"golang.org/x/oauth2"
 )
 
@@ -39,8 +40,8 @@ const (
 // API operations.
 type Client struct {
 	Token         string
-	Account       *Account
-	CryptoAccount *CryptoAccount
+	Account       *model.AccountInfo
+	CryptoAccount *model.CryptoAccount
 	*http.Client
 }
 
@@ -88,7 +89,7 @@ func (e ErrorMap) Error() string {
 
 // DoAndDecode provides useful abstractions around common errors and decoding
 // issues.
-func (c *Client) DoAndDecode(req *http.Request, dest interface{}) error {
+func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 	res, err := c.Do(req)
 	if err != nil {
 		return err
@@ -105,7 +106,8 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) error {
 		return e
 	}
 
-	return json.NewDecoder(res.Body).Decode(dest)
+	err = json.NewDecoder(res.Body).Decode(dest)
+	return err
 }
 
 // Meta holds metadata common to many RobinHood types.

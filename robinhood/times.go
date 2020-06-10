@@ -1,6 +1,9 @@
 package robinhood
 
-import "time"
+import (
+	"time"
+	// model "gitlab.com/brokerage-api/robinhood-openapi/openapi"
+)
 
 // Common constants for hours and minutes from midnight at which market events
 // occur.

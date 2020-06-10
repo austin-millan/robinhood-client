@@ -2,47 +2,33 @@ package robinhood
 
 import (
 	"sync"
+	model "gitlab.com/brokerage-api/robinhood-openapi/openapi"
 )
 
-// A Watchlist is a list of stock Instruments that an investor is tracking in
-// his Robinhood portfolio/app.
-type Watchlist struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
-	User string `json:"user"`
-
-	Client *Client `json:",ignore"`
-}
-
 // GetWatchlists retrieves the watchlists for a given set of credentials/accounts.
-func (c *Client) GetWatchlists() ([]Watchlist, error) {
-	var r struct{ Results []Watchlist }
+func (c *Client) GetWatchlists() ([]model.Watchlist, error) {
+	var r struct{ Results []model.Watchlist }
 	err := c.GetAndDecode(EPWatchlists, &r)
 	if err != nil {
 		return nil, err
-	}
-	if r.Results != nil {
-		for i := range r.Results {
-			r.Results[i].Client = c
-		}
 	}
 	return r.Results, nil
 }
 
 // GetInstruments returns the list of Instruments associated with a Watchlist.
-func (w *Watchlist) GetInstruments() ([]Instrument, error) {
+func (c *Client) GetInstruments(w *model.Watchlist) ([]model.InstrumentData, error) {
 	var r struct {
 		Results []struct {
 			Instrument, URL string
 		}
 	}
 
-	err := w.Client.GetAndDecode(w.URL, &r)
+	err := c.GetAndDecode(w.Url, &r)
 	if err != nil {
 		return nil, err
 	}
 
-	insts := make([]*Instrument, len(r.Results))
+	insts := make([]*model.InstrumentData, len(r.Results))
 	wg := &sync.WaitGroup{}
 	wg.Add(len(r.Results))
 
@@ -50,7 +36,7 @@ func (w *Watchlist) GetInstruments() ([]Instrument, error) {
 		go func(i int) {
 			defer wg.Done()
 
-			inst, err := w.Client.GetInstrument(r.Results[i].Instrument)
+			inst, err := c.GetInstrument(r.Results[i].Instrument)
 			if err != nil {
 				return
 			}
@@ -62,7 +48,7 @@ func (w *Watchlist) GetInstruments() ([]Instrument, error) {
 	wg.Wait()
 
 	// Filter slice for empties (if error)
-	retInsts := []Instrument{}
+	retInsts := []model.InstrumentData{}
 	for _, inst := range insts {
 		if inst != nil {
 			retInsts = append(retInsts, *inst)

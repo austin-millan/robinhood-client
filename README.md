@@ -7,6 +7,7 @@ This client library is based on [`github.com/andrewstuart/go-robinhood`](https:/
 - Uses OpenAPI generated structs
 - Conforms to Robinhood's API, which means most fields will be treated as a `string` type.
 - Includes more testing
+- Extends pagination
 
 ## Notice
 

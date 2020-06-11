@@ -22,7 +22,7 @@ func main() {
 	//err
 	i, err := c.GetInstrumentForSymbol("SPY")
 	if err != nil {
-		fmt.Errorf("Unable to gget SPY instrument")
+		fmt.Errorf("Unable to get SPY instrument")
 		return
 	}
 	fmt.Printf("%v", i)

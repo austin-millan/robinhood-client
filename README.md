@@ -16,28 +16,13 @@ to remove any credential cache and rebuild if you experience errors.
 ## General usage
 
 ```go
-cli, err := robinhood.Dial(&robinhood.OAuth{
-  Username: "andrewstuart",
-  Password: "mypasswordissecure",
-})
-
-//err
-
-i, err := cli.GetInstrumentForSymbol("SPY")
-
-//err
-
-o, err := cli.Order(i, robinhood.OrderOpts{
-  Price: 100.0,
-  Side: robinhood.Buy,
-  Quantity: 1,
-})
-
-//err
-
-err := cli.CancelOrder(o)
-
-if err != nil {
-  //Oh well
+o := &robinhood.CredsCacher{
+  Creds: &robinhood.OAuth{
+    Username: os.Getenv("ROBINHOOD_USERNAME"),
+    Password: os.Getenv("ROBINHOOD_PASSWORD"),
+  },
 }
+c, _ := robinhood.Dial(&robinhood.CredsCacher{Creds: o})
+
+i, _ := c.GetInstrumentForSymbol("SPY")
 ```

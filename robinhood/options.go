@@ -49,20 +49,38 @@ func (d *Date) UnmarshalJSON(bs []byte) error {
 }
 
 // GetOptionChains returns options for the given instruments
-func (c *Client) GetOptionChains(is ...*model.InstrumentData) ([]*model.OptionChain, error) {
+func (c *Client) GetOptionChains(ctx context.Context, is ...*model.InstrumentData) ([]model.OptionChain, error) {
 	s := []string{}
 	for _, inst := range is {
 		s = append(s, inst.Id)
 	}
 
-	var res struct{ Results []*model.OptionChain }
+	rs := make([]model.OptionChain, 0)
 
-	err := c.GetAndDecode(EPOptions+"chains/?equity_instrument_ids="+strings.Join(s, ","), &res)
+	var results model.PaginatedOptionChain
+
+	err := c.GetAndDecode(EPOptions+"chains/?equity_instrument_ids="+strings.Join(s, ","), &results)
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Results, nil
+	rs = append(rs, results.Results...)
+	pager := Pager{Next: results.Next, Previous: results.Previous}
+	for pager.HasMore() {
+		err := pager.GetNext(c, &rs)
+		if err != nil {
+			return rs, err
+		}
+		rs = append(rs, results.Results...)
+
+		select {
+		case <-ctx.Done():
+			return rs, nil
+		default:
+		}
+	}
+	return rs, nil
+
 }
 
 // Pager for paginating data
@@ -89,7 +107,7 @@ func (p *Pager) GetNext(c *Client, out interface{}) error {
 // provided context is cancelled. This is done to mimic the way the web UI
 // fetches many, many options instruments repeatedly, since I haven't yet
 // figured out how/when they decide to stop.
-func (c *Client) GetOptionsInstrument(ctx context.Context, o model.OptionChain, tradeType string, date Date) ([]*model.OptionInstrument, error) {
+func (c *Client) GetOptionsInstrument(ctx context.Context, o model.OptionChain, tradeType string, date Date) ([]model.OptionInstrument, error) {
 	u := fmt.Sprintf(
 		"%sinstruments/?chain_id=%s&expiration_dates=%s&state=active&tradability=tradable&type=%s",
 		EPOptions,
@@ -97,26 +115,23 @@ func (c *Client) GetOptionsInstrument(ctx context.Context, o model.OptionChain, 
 		date,
 		tradeType,
 	)
+	rs := make([]model.OptionInstrument, 0)
 
-	rs := []*model.OptionInstrument{}
+	var results model.PaginatedOptionInstrument
 
-	var out struct {
-		Results []*model.OptionInstrument
-		Pager
-	}
-	err := c.GetAndDecode(u, &out)
+	err := c.GetAndDecode(u, &results)
 	if err != nil {
 		return nil, err
 	}
 
-	rs = append(rs, out.Results...)
-
-	for out.HasMore() {
-		err := out.GetNext(c, &out)
+	rs = append(rs, results.Results...)
+	pager := Pager{Next: results.Next, Previous: results.Previous}
+	for pager.HasMore() {
+		err := pager.GetNext(c, &rs)
 		if err != nil {
 			return rs, err
 		}
-		rs = append(rs, out.Results...)
+		rs = append(rs, results.Results...)
 
 		select {
 		case <-ctx.Done():
@@ -146,7 +161,7 @@ func OIsForDate(os []*model.OptionInstrument, d Date) []*model.OptionInstrument 
 }
 
 // MarketData returns market data for all the listed Option instruments
-func (c *Client) MarketData(opts ...*model.OptionInstrument) ([]*model.MarketData, error) {
+func (c *Client) MarketData(opts ...model.OptionInstrument) ([]*model.MarketData, error) {
 	is := make([]string, len(opts))
 
 	for i, o := range opts {

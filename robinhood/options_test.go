@@ -29,17 +29,18 @@ func TestMarketData(t *testing.T) {
 	i, err := c.GetInstrumentForSymbol("SPY")
 	asrt.NoError(err)
 
-	ch, err := c.GetOptionChains(i)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ch, err := c.GetOptionChains(ctx, i)
 	asrt.NoError(err)
 	if len(ch) < 1 {
 		t.Errorf("Unable to get options chain for instrument")
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	insts, err := c.GetOptionsInstrument(ctx, *ch[0], "call", NewDate(2021, 3, 31))
+	insts, err := c.GetOptionsInstrument(ctx, ch[0], "call", NewDate(2021, 3, 31))
 	asrt.NoError(err)
 
 	fmt.Printf("len(insts) = %+v\n", len(insts))

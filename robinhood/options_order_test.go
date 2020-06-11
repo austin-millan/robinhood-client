@@ -51,17 +51,18 @@ func TestOrderOptions(t *testing.T) {
 	i, err := c.GetInstrumentForSymbol("SPY")
 	asrt.NoError(err)
 
-	ch, err := c.GetOptionChains(i)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ch, err := c.GetOptionChains(ctx, i)
 	asrt.NoError(err)
 	if len(ch) < 1 {
 		t.Errorf("Unable to get options chain for instrument")
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	insts, err := c.GetOptionsInstrument(ctx, *ch[0], "call", NewDate(2021, 3, 31))
+	insts, err := c.GetOptionsInstrument(ctx, ch[0], "call", NewDate(2021, 3, 31))
 	asrt.NoError(err)
 	inputOpts := OptionsOrderOpts{
 		Side:        model.BUY,
@@ -71,7 +72,7 @@ func TestOrderOptions(t *testing.T) {
 		Price:       0.01,
 		TimeInForce: model.GTC,
 	}
-	res, err := c.OrderOptions(insts[0], inputOpts)
+	res, err := c.OrderOptions(&insts[0], inputOpts)
 	if err != nil {
 		t.Errorf("%v", err)
 		return

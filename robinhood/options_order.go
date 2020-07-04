@@ -64,8 +64,8 @@ func (c *Client) OrderOptions(q *model.OptionInstrument, o OptionsOrderOpts) (js
 }
 
 // GetOptionsOrders returns all outstanding options orders
-func (c *Client) GetOptionsOrders() (json.RawMessage, error) {
-	var o json.RawMessage
+func (c *Client) GetOptionsOrders() (*model.GetOptionOrdersResponse, error) {
+	var o = &model.GetOptionOrdersResponse{}
 	err := c.GetAndDecode(EPOptions+"orders/", &o)
 	if err != nil {
 		return nil, err

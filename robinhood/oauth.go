@@ -89,3 +89,4 @@ func (p *OAuth) Token() (*oauth2.Token, error) {
 
 	return &o.Token, nil
 }
+

@@ -33,6 +33,16 @@ gitlab.com/brokerage-api/robinhood-openapi v1.0.1-0.20200611005454-662208a14743 
 gitlab.com/brokerage-api/robinhood-openapi v1.0.1-0.20200611005454-662208a14743/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
 gitlab.com/brokerage-api/robinhood-openapi v1.0.1-0.20200611005856-a5c09f6be107 h1:GIkgS1zoN64mZP+28VrEX2x7tAwqWSMajYaz4s2ARnQ=
 gitlab.com/brokerage-api/robinhood-openapi v1.0.1-0.20200611005856-a5c09f6be107/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.0 h1:VhJXmvH9DFwnFIexkZAbATpfvaLGKzU/pK01ZfTmrZA=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.0/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704023139-bc834276205b h1:LOLwFluCLp2dZcnrEFblVEHNK7rGJDzMR4qoqYIF+Uc=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704023139-bc834276205b/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704023306-7f0b2f54511b h1:jBuJwIZfdIbAFuZQaWWH1BYLbcO0eku0v9kstQBx+9Q=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704023306-7f0b2f54511b/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704024604-633128cddcca h1:s8B2c/k/knyN4/cqGSEx8MuNzx7mQhCbiLkKR76TCjQ=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704024604-633128cddcca/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704030859-8c4f8602c64e h1:CwIVhJ/VcEaLe8ZU7FRXTzwSf10tEJLryWMIY6iCCYA=
+gitlab.com/brokerage-api/robinhood-openapi v1.1.1-0.20200704030859-8c4f8602c64e/go.mod h1:MZX9zpvjdQ1jX8tZ8/Ih8G7MQQaZNKsV7WkA7zd3auY=
 golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e h1:bRhVy7zSSasaqNksaRZiA5EEI+Ei4I1nO5Jh72wfHlg=
 golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=

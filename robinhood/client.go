@@ -39,7 +39,6 @@ const (
 // A Client is a helpful abstraction around some common metadata required for
 // API operations.
 type Client struct {
-	Token         string
 	Account       *model.AccountInfo
 	CryptoAccount *model.CryptoAccount
 	*http.Client

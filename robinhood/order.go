@@ -2,6 +2,7 @@ package robinhood
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -83,6 +84,46 @@ func (c *Client) CancelOrder(o *model.Order) error {
 		return errors.New(o2.RejectReason)
 	}
 	return nil
+}
+
+// GetStockOrders returns orders made by this client.
+func (c *Client) GetStockOrders() ([]model.Order, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), defaultRequestTimeout)
+	rs := make([]model.Order, 0)
+	defer cancel()
+
+	var results model.PaginatedOrder
+	// err := c.GetAndDecode(EPBase+"/orders?page_size=200", &results)
+	err := c.GetAndDecode(EPOrders, &results)
+	if err != nil {
+		return nil, err
+	}
+
+	rs = append(rs, results.Results...)
+	pager := Pager{Next: results.Next, Previous: results.Previous}
+	for pager.HasMore() {
+		err := pager.GetNext(c, &results)
+		if err != nil {
+			return rs, err
+		}
+		rs = append(rs, results.Results...)
+
+		select {
+		case <-ctx.Done():
+			return rs, nil
+		default:
+		}
+	}
+
+	for _, order := range rs {  // TODO: optimize
+		instrumentData, err := c.GetInstrument(order.Instrument)
+		if err != nil {
+			break
+		}
+		order.Symbol = instrumentData.Symbol
+	}
+
+	return rs, nil
 }
 
 // RecentOrders returns any recent orders made by this client.

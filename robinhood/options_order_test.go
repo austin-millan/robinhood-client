@@ -24,10 +24,11 @@ func TestGetOptionsOrders(t *testing.T) {
 		Username: os.Getenv("ROBINHOOD_USERNAME"),
 		Password: os.Getenv("ROBINHOOD_PASSWORD"),
 	}
-
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	c, err := Dial(&CredsCacher{Creds: o})
 
-	res, err := c.GetOptionsOrders()
+	res, err := c.GetOptionsOrders(ctx)
 	if err != nil {
 		t.Errorf("%v", err)
 		return

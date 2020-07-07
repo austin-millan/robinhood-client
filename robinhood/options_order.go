@@ -2,6 +2,7 @@ package robinhood
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -24,8 +25,8 @@ type OptionsOrderOpts struct {
 // OrderOptions places a new order for options
 func (c *Client) OrderOptions(q *model.OptionInstrument, o OptionsOrderOpts) (json.RawMessage, error) {
 	b := model.OptionOrderInput{
-		Account:   c.Account.Url,
-		Direction: o.Direction,
+		Account:     c.Account.Url,
+		Direction:   o.Direction,
 		TimeInForce: o.TimeInForce,
 		Legs: []model.Leg{{
 			Option:         q.Url,
@@ -64,11 +65,30 @@ func (c *Client) OrderOptions(q *model.OptionInstrument, o OptionsOrderOpts) (js
 }
 
 // GetOptionsOrders returns all outstanding options orders
-func (c *Client) GetOptionsOrders() (*model.GetOptionOrdersResponse, error) {
-	var o = &model.GetOptionOrdersResponse{}
-	err := c.GetAndDecode(EPOptions+"orders/", &o)
+func (c *Client) GetOptionsOrders(ctx context.Context) (*[]model.OptionOrder, error) {
+	rs := make([]model.OptionOrder, 0)
+
+	var results model.GetOptionOrdersResponse
+
+	err := c.GetAndDecode(EPOptions+"orders/", &results)
 	if err != nil {
 		return nil, err
 	}
-	return o, nil
+
+	rs = append(rs, results.Results...)
+	pager := Pager{Next: results.Next, Previous: results.Previous}
+	for pager.HasMore() {
+		err := pager.GetNext(c, &results)
+		if err != nil {
+			return &rs, err
+		}
+		rs = append(rs, results.Results...)
+		select {
+		case <-ctx.Done():
+			return &rs, nil
+		default:
+		}
+	}
+
+	return &rs, nil
 }

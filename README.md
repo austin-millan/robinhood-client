@@ -27,3 +27,7 @@ c, _ := robinhood.Dial(&robinhood.CredsCacher{Creds: o})
 
 i, _ := c.GetInstrumentForSymbol("SPY")
 ```
+
+## Repository Views
+
+[![HitCount](http://hits.dwyl.com/austin-millan/robinhood-client.svg)](http://hits.dwyl.com/austin-millan/robinhood-client)

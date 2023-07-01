@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/brokerage-api/robinhood-client/robinhood"
+	robinhood "gitlab.com/brokerage-api/robinhood-client/client"
 )
 
 func main() {

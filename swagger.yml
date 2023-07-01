@@ -1,0 +1,2335 @@
+openapi: 3.0.0
+info:
+  description: Robinhood API Documentation
+  version: 3.0.1
+  title: Robinhood API
+  contact:
+    email: austin.millan@protonmail.com
+servers:
+  - url: http://api.robinhood.com
+  - url: https://api.robinhood.com
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+tags:
+  - name: accounts
+    description: Accounts
+  - name: authentication
+    description: Authentication
+  - name: dividends
+    description: Dividends
+  - name: fundamentals
+    description: Fundamentals
+  - name: instruments
+    description: Instruments
+  - name: markets
+    description: Markets
+  - name: movers
+    description: Movers
+  - name: order
+    description: Order
+  - name: quote
+    description: Quote
+  - name: user
+    description: User
+  - name: watchlists
+    description: Watchlists
+paths:
+  "/accounts/":
+    get:
+      tags:
+        - accounts
+      summary: getAccounts
+      operationId: GetAccounts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAccountInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/accounts/{accountId}/portfolio/':
+    get:
+      tags:
+        - accounts
+      summary: getPortfolio
+      operationId: getPortfolio
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/accounts/{accountId}/positions/':
+    get:
+      tags:
+        - accounts
+      summary: getPositions
+      operationId: getPositions
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: string
+        - name: nonzero
+          in: query
+          description: nonzero
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPosition'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/accounts/{accountId}/positions/{positionId}/':
+    get:
+      tags:
+        - accounts
+      summary: getPosition
+      operationId: getPosition
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: string
+        - name: positionId
+          in: path
+          description: positionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api-token-auth/:
+    post:
+      tags:
+        - authentication
+      summary: login
+      operationId: login
+      parameters:
+        - name: mfa_code
+          in: header # used to be requestData
+          description: mfa_code
+          required: false
+          schema:
+            type: string
+        - in: header # used to be formData
+          name: password
+          description: password
+          required: true
+          schema:
+            type: string
+        - in: header # used to be formData
+          name: username
+          description: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /api-token-logout/:
+    post:
+      tags:
+        - authentication
+      summary: logout
+      operationId: logout
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authorization
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/dividends/{id}/':
+    get:
+      tags:
+        - dividends
+      summary: getDividend
+      operationId: getDividend
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /fundamentals/:
+    get:
+      tags:
+        - fundamentals
+      summary: getFundamentals
+      operationId: getFundamentals
+      parameters:
+        - name: symbols
+          in: query
+          description: symbols
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFundamentalsData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/fundamentals/{symbol}/':
+    get:
+      tags:
+        - fundamentals
+      summary: getSymbolFundamentals
+      operationId: getSymbolFundamentals
+      parameters:
+        - name: symbol
+          in: path
+          description: symbol
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FundamentalsData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /instruments/:
+    get:
+      tags:
+        - instruments
+      summary: getInstruments
+      operationId: getInstruments
+      parameters:
+        - name: query
+          in: query
+          description: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInstrumentData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/instruments/{instrument_id}/':
+    get:
+      tags:
+        - instruments
+      summary: getInstrument
+      operationId: getInstrument
+      parameters:
+        - name: instrument_id
+          in: path
+          description: instrument_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstrumentData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/instruments/{instrument_id}/splits/':
+    get:
+      tags:
+        - instruments
+      summary: getInstrumentSplits
+      operationId: getInstrumentSplits
+      parameters:
+        - name: instrument_id
+          in: path
+          description: instrument_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInstrumentSplit'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /markets:
+    get:
+      tags:
+        - markets
+      summary: getMarkets
+      operationId: getMarkets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMarketData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/markets/{mic}/hours/{date}/':
+    get:
+      tags:
+        - markets
+      summary: getMArketHours
+      operationId: getMArketHours
+      parameters:
+        - name: date
+          in: path
+          description: date
+          required: true
+          schema:
+            type: string
+        - name: mic
+          in: path
+          description: mic
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketHours'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /midlands/movers/sp500/:
+    get:
+      tags:
+        - movers
+      summary: getMovers
+      operationId: getMovers
+      parameters:
+        - name: direction
+          in: query
+          description: direction
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMovers'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  "/options/orders":
+    get:
+      tags:
+        - order
+      summary: getOptionsOrders
+      operationId: getOptionsOrders
+      parameters:
+        - name: cursor
+          in: query
+          description: cursor
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOptionOrdersResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /orders/:
+    get:
+      tags:
+        - order
+      summary: getOrders
+      operationId: getOrders
+      parameters:
+        - name: page_size
+          in: query
+          description: page_size
+          required: false
+          schema:
+            type: integer
+            default: 256
+        - name: cursor
+          in: query
+          description: cursor
+          required: false
+          schema:
+            type: string
+        - name: instrument
+          in: query
+          description: instrument
+          required: false
+          schema:
+            type: string
+        - name: updated_at
+          in: query
+          description: updated_at
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrder'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - order
+      summary: placeOrder
+      operationId: placeOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/orders/{order_id}/':
+    get:
+      tags:
+        - order
+      summary: getOrder
+      operationId: getOrder
+      parameters:
+        - name: order_id
+          in: path
+          description: order_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/orders/{order_id}/cancel/':
+    post:
+      tags:
+        - order
+      summary: cancelOrder
+      operationId: cancelOrder
+      parameters:
+        - name: order_id
+          in: path
+          description: order_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /quotes/:
+    get:
+      tags:
+        - quote
+      summary: getQuotes
+      operationId: getQuotes
+      parameters:
+        - name: symbols
+          in: query
+          description: symbols
+          required: false
+          schema:
+            type: string
+            example: 'TSLA,AMD'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuoteData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/quotes/{symbol}/':
+    get:
+      tags:
+        - quote
+      summary: getSymbolQuote
+      operationId: getSymbolQuote
+      parameters:
+        - name: symbol
+          in: path
+          description: symbol
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/:
+    get:
+      tags:
+        - user
+      summary: getUser
+      operationId: getUser
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/basic_info/:
+    get:
+      tags:
+        - user
+      summary: getBasicUserInfo
+      operationId: getBasicUserInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/id/:
+    get:
+      tags:
+        - user
+      summary: getUserID
+      operationId: getUserID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserId'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /user/investment_profile/:
+    get:
+      tags:
+        - user
+      summary: getInvestmentProfile
+      operationId: getInvestmentProfile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentProfile'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /watchlists/:
+    get:
+      tags:
+        - watchlists
+      summary: getWatchlists
+      operationId: getWatchlists
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWatchListCreateResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - watchlists
+      summary: createWatchlist
+      operationId: createWatchlist
+      parameters:
+        - name: name
+          in: query
+          description: name
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchListCreateResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  /watchlists/Default/bulk_add/:
+    post:
+      tags:
+        - watchlists
+      summary: bulkAddWatchlists
+      operationId: bulkAddWatchlists
+      parameters:
+        - name: symbols
+          in: query
+          description: symbols
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchListsData'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/watchlists/{name}/':
+    get:
+      tags:
+        - watchlists
+      summary: getWatchlistByName
+      operationId: getWatchlistByName
+      parameters:
+        - name: name
+          in: path
+          description: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWatchListsData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  '/watchlists/{name}/{instrumentId}':
+    delete:
+      tags:
+        - watchlists
+      summary: deleteInstrumentFromWatchlist
+      operationId: deleteInstrumentFromWatchlist
+      parameters:
+        - name: instrumentId
+          in: path
+          description: instrumentId
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          description: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWatchListsData'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      deprecated: false
+components:
+  schemas:
+    Account:
+      properties:
+        option:
+          type: string
+        position_effect:
+          type: string
+        ratio_quantity:
+          type: string
+        side:
+          type: string
+      type: object
+    AccountInfo:
+      properties:
+        account_number:
+          type: string
+        buying_power:
+          type: string
+        cash:
+          type: string
+        cash_available_for_withdrawal:
+          type: string
+        cash_balances:
+          $ref: '#/components/schemas/CashBalances'
+        cash_held_for_orders:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        deactivated:
+          type: boolean
+        deposit_halted:
+          type: boolean
+        margin_balances:
+          $ref: '#/components/schemas/MarginBalances'
+        max_ach_early_access_amount:
+          type: string
+        only_position_closing_trades:
+          type: boolean
+        portfolio:
+          type: string
+        positions:
+          type: string
+        sma:
+          type: string
+        sma_held_for_orders:
+          type: string
+        sweep_enabled:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/AccountType'
+        uncleared_deposits:
+          type: string
+        unsettled_funds:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          type: string
+        user:
+          type: string
+        withdrawal_halted:
+          type: boolean
+      title: AccountInfo
+      type: object
+    AccountType:
+      enum:
+        - cash
+        - margin
+      title: type
+      type: string
+    Auth:
+      properties:
+        mfa_required:
+          type: string
+        mfa_type:
+          type: string
+        token:
+          type: string
+      type: object
+    AuthResponse:
+      $ref: '#/components/schemas/Auth'
+    BasicInfo:
+      properties:
+        address:
+          type: string
+        citizenship:
+          type: string
+        city:
+          type: string
+        country_of_residence:
+          type: string
+        date_of_birth:
+          type: string
+        marital_status:
+          $ref: '#/components/schemas/MaritalStatus'
+        number_dependents:
+          type: string
+        phone_number:
+          type: string
+        state:
+          type: string
+        tax_id_ssn:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user:
+          type: string
+        zipcode:
+          type: string
+      title: BasicInfo
+      type: object
+    CashBalances:
+      properties:
+        buying_power:
+          type: string
+        cash:
+          type: string
+        cash_available_for_withdrawal:
+          type: string
+        cash_held_for_orders:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        uncleared_deposits:
+          type: string
+        unsettled_funds:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      title: CashBalances
+      type: object
+    CryptoAccount:
+      properties:
+        id:
+          title: id
+          type: string
+        status:
+          type: string
+        user_id:
+          title: user_id
+          type: string
+      type: object
+    CryptoAssetCurrency:
+      properties:
+        brand_color:
+          type: string
+        code:
+          type: string
+        id:
+          title: ID
+          type: string
+        increment:
+          title: increment
+          type: string
+        name:
+          title: string
+      type: object
+    CryptoCurrencyPair:
+      properties:
+        asset_currency:
+          $ref: '#/components/schemas/CryptoAssetCurrency'
+          title: asset_currency
+        id:
+          title: ID
+          type: string
+        max_order_size:
+          type: string
+        min_order_price_increment:
+          type: string
+        min_order_size:
+          title: min_order_size
+          type: string
+        name:
+          type: string
+        quote_currency:
+          $ref: '#/components/schemas/QuoteCurrency'
+          title: quote_currency
+        symbol:
+          type: string
+        tradability:
+          type: string
+      type: object
+    CryptoOrder:
+      properties:
+        account_id:
+          title: account_id
+          type: string
+        currency_pair_id:
+          title: currency_pair_id
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        ref_id:
+          title: ref_id
+          type: string
+        side:
+          $ref: '#/components/schemas/Side'
+        time_in_force:
+          $ref: '#/components/schemas/TimeInForce'
+          title: time_in_force
+        type:
+          $ref: '#/components/schemas/ExecutionType'
+          title: type
+      type: object
+    CryptoOrderOptions:
+      properties:
+        account:
+          title: account
+          type: string
+        average_price:
+          type: string
+        cancel:
+          title: cancel
+          type: string
+        created_at:
+          type: string
+        cumulative_quantity:
+          type: string
+        currency_pair_id:
+          type: string
+        executions:
+          items:
+            $ref: '#/components/schemas/Execution'
+          type: array
+        id:
+          title: id
+          type: string
+        last_transaction_at:
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        reject_reason:
+          type: string
+        side:
+          $ref: '#/components/schemas/Side'
+        state:
+          type: string
+        stop_price:
+          title: stop_price
+          type: string
+        time_in_force:
+          $ref: '#/components/schemas/TimeInForce'
+          title: time_in_force
+        type:
+          title: type
+          type: string
+      type: object
+    CryptoOrderOutput:
+      properties:
+        account:
+          title: account
+          type: string
+        average_price:
+          type: string
+        cancel:
+          title: cancel
+          type: string
+        cancel_url:
+          title: cancel_url
+          type: string
+        created_at:
+          type: string
+        cumulative_quantity:
+          type: string
+        currency_pair_id:
+          type: string
+        executions:
+          items:
+            $ref: '#/components/schemas/Execution'
+          type: array
+        id:
+          title: id
+          type: string
+        last_transaction_at:
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        reject_reason:
+          type: string
+        side:
+          $ref: '#/components/schemas/Side'
+        state:
+          type: string
+        stop_price:
+          title: stop_price
+          type: string
+        time_in_force:
+          $ref: '#/components/schemas/TimeInForce'
+          title: time_in_force
+        type:
+          title: type
+          type: string
+      type: object
+    CryptoPortfolio:
+      properties:
+        account_id:
+          type: string
+        equity:
+          type: string
+        extended_hours_equity:
+          type: string
+        extended_hours_market_value:
+          type: string
+        id:
+          title: id
+          type: string
+      title: CryptoPortfolio
+      type: object
+    Direction:
+      enum:
+        - debit
+        - credit
+      type: string
+    Execution:
+      properties:
+        id:
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        settlement_date:
+          format: date
+          type: string
+        timestamp:
+          format: date-time
+          type: string
+      title: Execution
+      type: object
+    ExecutionType:
+      enum:
+        - market
+        - limit
+      type: string
+    FundamentalsData:
+      properties:
+        average_volume:
+          type: string
+        description:
+          type: string
+        dividend_yield:
+          type: string
+        high:
+          type: string
+        high_52_weeks:
+          type: string
+        instrument:
+          type: string
+        low:
+          type: string
+        low_52_weeks:
+          type: string
+        market_cap:
+          type: string
+        open:
+          type: string
+        pe_ratio:
+          type: string
+        volume:
+          type: string
+      title: FundamentalsData
+      type: object
+    InstrumentData:
+      properties:
+        bloomberg_unique:
+          type: string
+        country:
+          type: string
+        day_trade_ratio:
+          type: string
+        fundamentals:
+          type: string
+        id:
+          type: string
+        list_date:
+          type: string
+        maintenance_ratio:
+          type: string
+        margin_initial_ratio:
+          type: string
+        market:
+          type: string
+        min_tick_size:
+          type: string
+        name:
+          type: string
+        quote:
+          type: string
+        simple_name:
+          type: string
+        splits:
+          type: string
+        state:
+          $ref: '#/components/schemas/InstrumentState'
+        symbol:
+          type: string
+        tradability:
+          type: string
+        tradeable:
+          format: boolean
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+      title: InstrumentData
+      type: object
+    InstrumentSplit:
+      properties:
+        divisor:
+          type: string
+        execution_date:
+          type: string
+        instrument:
+          type: string
+        multiplier:
+          type: string
+        url:
+          type: string
+      title: InstrumentSplit
+      type: object
+    InstrumentState:
+      enum:
+        - active
+        - inactive
+      type: string
+    InvestmentExperience:
+      enum:
+        - extensive_investment_exp
+        - good_investment_exp
+        - limited_investment_exp
+        - no_investment_exp
+      type: string
+    InvestmentObjective:
+      enum:
+        - cap_preserve_invest_obj
+        - income_invest_obj
+        - growth_invest_obj
+        - speculation_invest_obj
+        - other_invest_obj
+      type: string
+    InvestmentProfile:
+      properties:
+        annual_income:
+          type: string
+        investment_experience:
+          $ref: '#/components/schemas/InvestmentExperience'
+        investment_objective:
+          $ref: '#/components/schemas/InvestmentObjective'
+        liquid_net_worth:
+          type: string
+        liquidity_needs:
+          $ref: '#/components/schemas/LiquidityNeeds'
+        risk_tolerance:
+          $ref: '#/components/schemas/RiskTolerance'
+        source_of_funds:
+          $ref: '#/components/schemas/SourceOfFunds'
+        suitability_verified:
+          type: boolean
+        tax_bracket:
+          $ref: '#/components/schemas/TaxBracket'
+        time_horizon:
+          $ref: '#/components/schemas/TimeHorizon'
+        total_net_worth:
+          $ref: '#/components/schemas/TotalNetWorth'
+        updated_at:
+          format: date-time
+          type: string
+        user:
+          type: string
+      title: InvestmentProfile
+      type: object
+    Leg:
+      properties:
+        option:
+          type: string
+        position_effect:
+          type: string
+        ratio_quantity:
+          type: string
+        side:
+          $ref: '#/components/schemas/Side'
+      type: object
+    LiquidityNeeds:
+      enum:
+        - not_important_liq_need
+        - somewhat_important_liq_need
+        - very_important_liq_need
+      type: string
+    MarginBalances:
+      properties:
+        cash:
+          type: string
+        cash_available_for_withdrawal:
+          type: string
+        cash_held_for_orders:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        day_trade_buying_power:
+          type: string
+        day_trade_buying_power_held_for_orders:
+          type: string
+        day_trade_ratio:
+          type: string
+        margin_limit:
+          type: string
+        marked_pattern_day_trader_date:
+          format: date-time
+          type: string
+        overnight_buying_power:
+          type: string
+        overnight_buying_power_held_for_orders:
+          type: string
+        overnight_ratio:
+          type: string
+        unallocated_margin_cash:
+          type: string
+        uncleared_deposits:
+          type: string
+        unsettled_funds:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      title: MarginBalances
+      type: object
+    MaritalStatus:
+      enum:
+        - single
+        - married
+      type: string
+    MarketData:
+      properties:
+        acronym:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        mic:
+          type: string
+        name:
+          type: string
+        operating_mic:
+          type: string
+        timezone:
+          type: string
+        todays_hours:
+          type: string
+        url:
+          type: string
+        website:
+          type: string
+      title: MarketData
+      type: object
+    MarketHours:
+      properties:
+        closes_at:
+          format: date-time
+          type: string
+        date:
+          format: date-time
+          type: string
+        extended_closes_at:
+          format: date-time
+          type: string
+        extended_opens_at:
+          format: date-time
+          type: string
+        is_open:
+          type: boolean
+        next_open_hours:
+          type: string
+        opens_at:
+          format: date-time
+          type: string
+        previous_open_hours:
+          type: string
+      title: MarketHours
+      type: object
+    MinTicks:
+      properties:
+        above_tick:
+          type: string
+        below_tick:
+          type: string
+        cutoff_price:
+          type: string
+    Movers:
+      title: Movers
+      type: object
+    OptionChain:
+      properties:
+        can_open_position:
+          type: boolean
+        cash_component:
+          type: object
+        expiration_dates:
+          items:
+            type: string
+          type: array
+        id:
+          title: id
+          type: string
+        min_ticks:
+          $ref: '#/components/schemas/MinTicks'
+        symbol:
+          type: string
+        trade_value_multiplier:
+          type: string
+        underlying_instruments:
+          items:
+            $ref: '#/components/schemas/UnderlyingInstrument'
+          type: array
+    OptionInstrument:
+      properties:
+        chain_id:
+          type: string
+        chain_symbol:
+          type: string
+        created_at:
+          type: string
+        expiration_date:
+          format: date
+          type: string
+        id:
+          title: id
+          type: string
+        issue_date:
+          type: string
+        min_ticks:
+          $ref: '#/components/schemas/MinTicks'
+        rhs_tradability:
+          type: string
+        state:
+          type: string
+        strike_price:
+          type: string
+        tradability:
+          type: string
+        type:
+          type: string
+        updated_at:
+          type: string
+        url:
+          type: string
+    GetOptionOrdersResponse:
+      type: object
+      properties:
+        next:
+          type: string
+          example: https://api.robinhood.com/options/orders/?cursor=cD0yMDIwLTAzLTE5KzEzJTNBNDYlM0E1NS4yOTgwNzklMkIwMCUzQTAw
+        previous: 
+          type: string
+          format: nullable
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionOrder'
+    OptionOrderLeg:
+      type: object
+      properties: 
+        executions: 
+          type: array
+          items: 
+            type: object
+            properties: 
+              id: 
+                type: string
+                example: 40819043-074d-4d33-ae47-83133a6a1a3b
+              price: 
+                type: string
+                example: 0.50000000
+              quantity: 
+                type: string
+                example: 1.00000
+              settlement_date: 
+                type: string
+                format: date
+                example: 2020-07-06
+              timestamp: 
+                type: string
+                example: 2020-07-02T19:55:55.602000Z
+        id: 
+          type: string
+          example: 29bdd1c0-0fbf-4d6d-967b-c4b85764b711
+        option: 
+          type: string
+          example: https://api.robinhood.com/options/instruments/e53b22e7-d71c-4bf7-852b-6032ee3b337d/
+        position_effect: 
+          $ref: "#/components/schemas/PositionEffect"
+        ratio_quantity: 
+          type: number
+          example: 1
+        side: 
+          $ref: "#/components/schemas/Side"
+    PositionEffect:
+      type: string
+      enum:
+        - open
+        - close
+    OptionOrder:
+      type: object
+      properties: 
+        cancel_url: 
+          type: string
+          format: nullable
+        canceled_quantity: 
+          type: string
+          example: 0.00000
+        created_at: 
+          type: string
+          example: 2020-07-02T19:55:55.167080Z
+        direction:
+          $ref: '#/components/schemas/Direction'
+        id: 
+          type: string
+        legs: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/OptionOrderLeg'
+        pending_quantity: 
+          type: string
+          example: 0.00000
+        premium: 
+          type: string
+          example: 50.00000000
+        processed_premium: 
+          type: string
+          example: 100.00000000000000000
+        price: 
+          type: string
+          example: 0.50000000
+        processed_quantity: 
+          type: string
+          example: 2.00000
+        quantity: 
+          type: string
+          example: 2.00000
+        ref_id: 
+          type: string
+          example: 1599c41c-ac84-49d8-9eb0-5dabfa5d2829
+        state: 
+          $ref: '#/components/schemas/OrderState'
+        time_in_force: 
+          $ref: "#/components/schemas/TimeInForce"
+        trigger: 
+          $ref: "#/components/schemas/Trigger"
+        type: 
+          $ref: "#/components/schemas/ExecutionType"
+        updated_at: 
+          type: string
+          example: 2020-07-02T19:55:56.193242Z
+        chain_id: 
+          type: string
+          example: c277b118-58d9-4060-8dc5-a3b5898955cb
+        chain_symbol: 
+          type: string
+          example: SPY
+        response_category: 
+          type: string
+          format: nullable
+        opening_strategy: 
+          $ref: "#/components/schemas/OpenCloseStrategy"
+        closing_strategy: 
+          $ref: "#/components/schemas/OpenCloseStrategy"
+        stop_price: 
+          type: string
+          format: nullable
+    OpenCloseStrategy:
+      type: string
+      enum:
+        - long_call
+        - long_put
+        - long_call_spread
+        - long_put_spread
+        - short_put_spread
+        - short_call_spread
+        - short_put_ladder
+        - short_call_ladder
+    OptionOrderInput:
+      properties:
+        account:
+          type: string
+        direction:
+          $ref: '#/components/schemas/Direction'
+        legs:
+          items:
+            $ref: '#/components/schemas/Leg'
+        override_day_trade_checks:
+          title: override_day_trade_checks
+          type: boolean
+        override_dtbp_checks:
+          title: override_dtbp_checks
+          type: boolean
+        price:
+          type: string
+        quantity:
+          type: string
+        ref_id:
+          type: string
+        time_in_force:
+          $ref: '#/components/schemas/TimeInForce'
+        trigger:
+          $ref: '#/components/schemas/Trigger'
+        type:
+          $ref: '#/components/schemas/ExecutionType'
+          title: type
+      type: object
+    OptionsMarketData:
+      properties:
+        adjusted_mark_price:
+          type: string
+        ask_price:
+          type: string
+        ask_size:
+          type: string
+        bid_price:
+          type: string
+        bid_size:
+          type: string
+        break_even_price:
+          type: string
+        chance_of_profit_long:
+          type: string
+        chance_of_profit_short:
+          type: string
+        delta:
+          type: string
+        gamma:
+          type: string
+        high_price:
+          type: string
+        implied_volatility:
+          type: string
+        instrument:
+          type: string
+        last_trade_price:
+          type: string
+        last_trade_size:
+          type: string
+        low_price:
+          type: string
+        mark_price:
+          type: string
+        open_interest:
+          type: string
+        previous_close_date:
+          type: string
+        previous_close_price:
+          type: string
+        rho:
+          type: string
+        theta:
+          type: string
+        vega:
+          type: string
+        volume:
+          type: string
+      title: MarketData
+      type: object
+    Order:
+      properties:
+        account:
+          type: string
+        action:
+          $ref: '#/components/schemas/OrderAction'
+        average_price:
+          type: string
+        cancel_url:
+          type: string
+        client_id:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        cumulative_quantity:
+          type: string
+        dollar_based_amount:
+          type: string
+        executions:
+          items:
+            $ref: '#/components/schemas/Execution'
+          type: array
+        total_notional:
+          type: object
+          properties:
+            amount:
+              type: string
+            currency_code:
+              type: string
+            currency_id:
+              type: string
+        executed_notional:
+          type: object
+          properties:
+            amount:
+              type: string
+            currency_code:
+              type: string
+            currency_id:
+              type: string
+        extended_hours:
+          type: boolean
+        fees:
+          type: string
+        id:
+          type: string
+        investment_schedule_id:
+          type: string
+        instrument:
+          type: string
+        last_trail_price:
+          type: string
+        last_trail_price_updated_at:
+          type: string
+        last_transaction_at:
+          type: string
+        override_day_trade_checks:
+          type: boolean
+        override_dtbp_checks:
+          type: boolean
+        position:
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        ref_id:
+          type: string
+        reject_reason:
+          type: string
+        side:
+          $ref: '#/components/schemas/Side'
+        state:
+          $ref: '#/components/schemas/OrderState'
+        stop_price:
+          type: string
+        stop_triggered_at:
+          type: string
+        symbol:
+          type: string
+        time_in_force:
+          $ref: '#/components/schemas/TimeInForce'
+        trigger:
+          $ref: '#/components/schemas/Trigger'
+        type:
+          $ref: '#/components/schemas/ExecutionType'
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          type: string
+      title: Order
+      type: object
+    OrderAction:
+      enum:
+        - order
+        - status
+        - cancel
+        - history
+      type: string
+    OrderResponse:
+      $ref: '#/components/schemas/Order'
+    OrderState:
+      enum:
+        - queued
+        - unconfirmed
+        - confirmed
+        - partially_filled
+        - filled
+        - rejected
+        - canceled
+        - failed
+      type: string
+    PaginatedAccountInfo:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/AccountInfo'
+          type: array
+      title: PaginatedAccountInfo
+      type: object
+    PaginatedOptionInstrument:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/OptionInstrument'
+          type: array
+      title: PaginatedOptionInstrument
+      type: object
+    PaginatedOptionChain:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/OptionChain'
+          type: array
+      title: PaginatedOptionChain
+      type: object
+    PaginatedFundamentalsData:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/FundamentalsData'
+          type: array
+      title: PaginatedFundamentalsData
+      type: object
+    PaginatedInstrumentData:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/InstrumentData'
+          type: array
+      title: PaginatedInstrumentData
+      type: object
+    PaginatedInstrumentSplit:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/InstrumentSplit'
+          type: array
+      title: PaginatedInstrumentSplit
+      type: object
+    PaginatedMarketData:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/MarketData'
+          type: array
+      title: PaginatedMarketData
+      type: object
+    PaginatedMovers:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Movers'
+          type: array
+      title: PaginatedMovers
+      type: object
+    PaginatedOrder:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Order'
+          type: array
+      type: object
+    PaginatedPosition:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/Position'
+          type: array
+      title: PaginatedPosition
+      type: object
+    PaginatedQuoteData:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/QuoteData'
+          type: array
+      title: PaginatedQuoteData
+      type: object
+    PaginatedWatchListCreateResponse:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/WatchListCreateResponse'
+          type: array
+      title: PaginatedWatchListCreateResponse
+      type: object
+    PaginatedWatchListsData:
+      properties:
+        count:
+          type: string
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/WatchListsData'
+          type: array
+      title: PaginatedWatchListsData
+      type: object
+    Portfolio:
+      properties:
+        account:
+          type: string
+        adjusted_equity_previous_close:
+          type: string
+        equity:
+          type: string
+        equity_previous_close:
+          type: string
+        excess_maintenance:
+          type: string
+        excess_maintenance_with_uncleared_deposits:
+          type: string
+        excess_margin:
+          type: string
+        excess_margin_with_uncleared_deposits:
+          type: string
+        extended_hours_equity:
+          type: string
+        extended_hours_market_value:
+          type: string
+        last_core_equity:
+          type: string
+        last_core_market_value:
+          type: string
+        market_value:
+          type: string
+        start_date:
+          type: string
+        unwithdrawable_deposits:
+          type: string
+        unwithdrawable_grants:
+          type: string
+        url:
+          type: string
+        withdrawable_amount:
+          type: string
+      title: Portfolio
+      type: object
+    Position:
+      properties:
+        account:
+          type: string
+        average_buy_price:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        instrument:
+          type: string
+        intraday_average_buy_price:
+          type: string
+        intraday_quantity:
+          type: string
+        quantity:
+          type: string
+        shares_held_for_buys:
+          type: string
+        shares_held_for_sells:
+          type: string
+        shares_held_for_stock_grants:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          type: string
+      title: Position
+      type: object
+    Quote:
+      properties:
+        adjusted_previous_close:
+          type: string
+        ask_price:
+          type: string
+        ask_size:
+          format: int32
+          type: integer
+        bid_price:
+          type: string
+        bid_size:
+          format: int32
+          type: integer
+        last_extended_hours_trade_price:
+          type: string
+        last_trade_price:
+          type: string
+        previous_close:
+          type: string
+        previous_close_date:
+          type: string
+        symbol:
+          type: string
+        trading_halted:
+          type: boolean
+        updated_at:
+          type: string
+      type: object
+    QuoteCurrency:
+      properties:
+        code:
+          type: string
+        id:
+          title: ID
+          type: string
+        increment:
+          title: increment
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+      type: object
+    QuoteData:
+      properties:
+        adjusted_previous_close:
+          type: string
+        ask_price:
+          type: string
+        ask_size:
+          type: string
+        bid_price:
+          type: string
+        bid_size:
+          type: string
+        last_extended_hours_trade_price:
+          type: string
+        last_trade_price:
+          type: string
+        previous_close:
+          type: string
+        previous_close_date:
+          format: date
+          type: string
+        symbol:
+          type: string
+        trading_halted:
+          type: boolean
+        updated_at:
+          format: date-time
+          type: string
+      title: QuoteData
+      type: object
+    RiskTolerance:
+      enum:
+        - low_risk_tolerance
+        - med_risk_tolerance
+        - high_risk_tolerance
+      type: string
+    Side:
+      enum:
+        - buy
+        - sell
+      type: string
+    SourceOfFunds:
+      enum:
+        - savings_personal_income
+        - pension_retirement
+        - insurance_payout
+        - inheritance
+        - gift
+        - sale_business_or_property
+        - other
+      type: string
+    TaxBracket:
+      enum:
+        - 0_pct
+        - 20_pct
+        - 25_pct
+        - 28_pct
+        - 33_pct
+        - 35_pct
+        - 39_6_pct
+      type: string
+    TimeHorizon:
+      enum:
+        - short_time_horizon
+        - med_time_horizon
+        - long_time_horizon
+      type: string
+    TimeInForce:
+      enum:
+        - gfd
+        - gtc
+        - ioc
+        - opg
+      type: string
+    TotalNetWorth:
+      enum:
+        - 0_24999
+        - '25000_49999'
+        - '50000_64999'
+        - '65000_99999'
+        - '100000_149999'
+        - '150000_199999'
+        - '250000_499999'
+        - '500000_999999'
+        - 1000000_inf
+      type: string
+    Trigger:
+      enum:
+        - immediate
+        - stop
+      type: string
+    UnderlyingInstrument:
+      properties:
+        id:
+          title: id
+          type: string
+        instrument:
+          title: instrument
+          type: string
+        quantity:
+          type: number
+    UserId:
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        username:
+          type: string
+      title: UserId
+      type: object
+    UserInfo:
+      properties:
+        additional_info:
+          type: string
+        basic_info:
+          type: string
+        email:
+          type: string
+        employment:
+          type: string
+        first_name:
+          type: string
+        id:
+          type: string
+        id_info:
+          type: string
+        international_info:
+          type: string
+        investment_profile:
+          type: string
+        last_name:
+          type: string
+        url:
+          type: string
+        username:
+          type: string
+      title: UserInfo
+      type: object
+    WatchListCreateResponse:
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        user:
+          type: string
+      title: WatchListCreateResponse
+      type: object
+    WatchListsData:
+      properties:
+        created_at:
+          type: string
+        instrument:
+          type: string
+        url:
+          type: string
+        watchlist:
+          type: string
+      title: WatchListsData
+      type: object
+    Watchlist:
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        user:
+          type: string
+      type: object

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	model "gitlab.com/brokerage-api/robinhood-client/models"
 )
@@ -27,22 +28,24 @@ type OrderOpts struct {
 
 // Order places an order for a given instrument
 func (c *Client) Order(i *model.InstrumentData, o OrderOpts) (*model.Order, error) {
+	trigger := model.IMMEDIATE
 	a := model.Order{
 		Account:       c.Account.Url,
 		Instrument:    i.Url,
 		Symbol:        i.Symbol,
-		Type:          o.Type,
-		TimeInForce:   o.TimeInForce,
-		Quantity:      string(o.Quantity),
-		Side:          o.Side,
-		ExtendedHours: o.ExtendedHours,
-		Price:         fmt.Sprintf("%f", o.Price),
-		Trigger:       "immediate",
+		Type:          &o.Type,
+		TimeInForce:   &o.TimeInForce,
+		Quantity:      pointer.ToString(string(o.Quantity)),
+		Side:          &o.Side,
+		ExtendedHours: &o.ExtendedHours,
+		Price:         pointer.ToString(fmt.Sprintf("%f", o.Price)),
+		Trigger:       &trigger,
 	}
 
 	if o.Stop {
-		a.StopPrice = fmt.Sprintf("%f", o.Price)
-		a.Trigger = "stop"
+		a.StopPrice = pointer.ToString(fmt.Sprintf("%f", o.Price))
+		trigger := model.STOP
+		a.Trigger = &trigger
 	}
 
 	bs, err := json.Marshal(a)
@@ -64,12 +67,12 @@ func (c *Client) Order(i *model.InstrumentData, o OrderOpts) (*model.Order, erro
 
 // UpdateOrder returns any errors and updates the item with any recent changes.
 func (c *Client) UpdateOrder(o model.Order) error {
-	return c.GetAndDecode(o.Url, o)
+	return c.GetAndDecode(pointer.GetString(o.Url), o)
 }
 
 // CancelOrder attempts to cancel an odrer
 func (c *Client) CancelOrder(o *model.Order) error {
-	post, err := http.NewRequest("POST", o.CancelUrl, nil)
+	post, err := http.NewRequest("POST", pointer.GetString(o.CancelUrl), nil)
 	if err != nil {
 		return err
 	}
@@ -80,8 +83,8 @@ func (c *Client) CancelOrder(o *model.Order) error {
 		return errors.Wrap(err, "could not decode response")
 	}
 
-	if o2.RejectReason != "" {
-		return errors.New(o2.RejectReason)
+	if pointer.GetString(o2.RejectReason) != "" {
+		return errors.New(pointer.GetString(o2.RejectReason))
 	}
 	return nil
 }
@@ -100,7 +103,7 @@ func (c *Client) GetStockOrders() ([]model.Order, error) {
 	}
 
 	rs = append(rs, results.Results...)
-	pager := Pager{Next: results.Next, Previous: results.Previous}
+	pager := Pager{Next: *results.Next, Previous: *results.Previous}
 	for pager.HasMore() {
 		err := pager.GetNext(c, &results)
 		if err != nil {
@@ -115,8 +118,8 @@ func (c *Client) GetStockOrders() ([]model.Order, error) {
 		}
 	}
 
-	for _, order := range rs {  // TODO: optimize
-		instrumentData, err := c.GetInstrument(order.Instrument)
+	for _, order := range rs { // TODO: optimize
+		instrumentData, err := c.GetInstrument(pointer.GetString(order.Instrument))
 		if err != nil {
 			break
 		}
@@ -136,7 +139,7 @@ func (c *Client) RecentOrders() ([]model.Order, error) {
 		return nil, err
 	}
 	for _, order := range o.Results {
-		instrumentData, err := c.GetInstrument(order.Instrument)
+		instrumentData, err := c.GetInstrument(pointer.GetString(order.Instrument))
 		if err != nil {
 			break
 		}

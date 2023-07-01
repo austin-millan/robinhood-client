@@ -1,6 +1,7 @@
 package robinhood
 
 import (
+	"github.com/AlekSi/pointer"
 	model "gitlab.com/brokerage-api/robinhood-client/models"
 )
 
@@ -15,7 +16,7 @@ func (c *Client) GetPortfolios() ([]model.Portfolio, error) {
 // GetCryptoPortfolios returns crypto portfolio info
 func (c *Client) GetCryptoPortfolios() (model.CryptoPortfolio, error) {
 	var p model.CryptoPortfolio
-	var portfolioURL = EPCryptoPortfolio + c.CryptoAccount.Id
+	var portfolioURL = EPCryptoPortfolio + pointer.GetString(c.CryptoAccount.Id)
 	err := c.GetAndDecode(portfolioURL, &p)
 	return p, err
 }

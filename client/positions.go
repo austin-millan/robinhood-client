@@ -2,6 +2,8 @@ package robinhood
 
 import (
 	"net/url"
+
+	"github.com/AlekSi/pointer"
 	model "gitlab.com/brokerage-api/robinhood-client/models"
 )
 
@@ -30,7 +32,7 @@ func (p PositionParams) encode() string {
 // passes the encoded PositionsParams object along to the RobinHood API as part
 // of the query string.
 func (c *Client) GetPositionsParams(a model.AccountInfo, p PositionParams) ([]model.Position, error) {
-	u, err := url.Parse(a.Positions)
+	u, err := url.Parse(pointer.GetString(a.Positions))
 	if err != nil {
 		return nil, err
 	}

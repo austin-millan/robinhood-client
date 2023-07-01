@@ -23,7 +23,7 @@ func (c *Client) GetCryptoInstrument(symbol string) (*model.CryptoCurrencyPair, 
 	}
 
 	for _, pair := range allPairs {
-		if pair.AssetCurrency.Code == symbol {
+		if *pair.AssetCurrency.Code == symbol {
 			return &pair, nil
 		}
 	}

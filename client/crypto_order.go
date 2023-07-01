@@ -9,7 +9,7 @@ import (
 
 	"encoding/json"
 	"net/http"
-
+	"github.com/AlekSi/pointer"
 	model "gitlab.com/brokerage-api/robinhood-client/models"
 )
 
@@ -34,12 +34,12 @@ func (c *Client) CryptoOrder(cryptoPair model.CryptoCurrencyPair, o CryptoOrderO
 	a := model.CryptoOrder{
 		AccountId:      c.CryptoAccount.Id,
 		CurrencyPairId: cryptoPair.Id,
-		Quantity:       fmt.Sprintf("%f", quantity),
-		Price:          fmt.Sprintf("%f", o.Price),
-		RefId:          uuid.New().String(),
-		Side:           o.Side,
-		TimeInForce:    o.TimeInForce,
-		Type:           o.Type,
+		Quantity:       pointer.ToString(fmt.Sprintf("%f", quantity)),
+		Price:          pointer.ToString(fmt.Sprintf("%f", o.Price)),
+		RefId:          pointer.ToString(uuid.New().String()),
+		Side:           &o.Side,
+		TimeInForce:    &o.TimeInForce,
+		Type:           &o.Type,
 	}
 
 	payload, err := json.Marshal(a)
@@ -63,7 +63,7 @@ func (c *Client) CryptoOrder(cryptoPair model.CryptoCurrencyPair, o CryptoOrderO
 
 // CancelCryptoOrder to cancel order
 func (c *Client) CancelCryptoOrder(o model.CryptoOrderOutput) error {
-	post, err := http.NewRequest("POST", o.CancelUrl, nil)
+	post, err := http.NewRequest("POST", *o.CancelUrl, nil)
 	if err != nil {
 		return err
 	}
@@ -75,8 +75,8 @@ func (c *Client) CancelCryptoOrder(o model.CryptoOrderOutput) error {
 		return errors.Wrap(err, "could not decode response")
 	}
 
-	if output.RejectReason != "" {
-		return errors.New(output.RejectReason)
+	if pointer.GetString(output.RejectReason) != "" {
+		return errors.New(pointer.GetString(output.RejectReason))
 	}
 
 	return nil

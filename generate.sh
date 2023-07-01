@@ -7,7 +7,7 @@ docker run \
     --rm \
     --user $(id -u):$(id -g) \
     -v ${PWD}:/local \
-    openapitools/openapi-generator-cli generate \
+    openapitools/openapi-generator-cli:latest generate \
         -i /local/swagger.yml \
         -g go \
         -o /local/models

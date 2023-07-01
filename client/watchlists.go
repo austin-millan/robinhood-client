@@ -2,6 +2,8 @@ package robinhood
 
 import (
 	"sync"
+
+	"github.com/AlekSi/pointer"
 	model "gitlab.com/brokerage-api/robinhood-client/models"
 )
 
@@ -23,7 +25,7 @@ func (c *Client) GetInstruments(w *model.Watchlist) ([]model.InstrumentData, err
 		}
 	}
 
-	err := c.GetAndDecode(w.Url, &r)
+	err := c.GetAndDecode(pointer.GetString(w.Url), &r)
 	if err != nil {
 		return nil, err
 	}

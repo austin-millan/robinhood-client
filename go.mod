@@ -1,6 +1,7 @@
 module gitlab.com/brokerage-api/robinhood-client
 
 require (
+	github.com/AlekSi/pointer v1.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/hashicorp/go-multierror v1.0.0

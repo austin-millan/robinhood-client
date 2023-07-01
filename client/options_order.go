@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/AlekSi/pointer"
 	"github.com/google/uuid"
 	model "gitlab.com/brokerage-api/robinhood-client/models"
 )
@@ -26,23 +27,23 @@ type OptionsOrderOpts struct {
 func (c *Client) OrderOptions(q *model.OptionInstrument, o OptionsOrderOpts) (json.RawMessage, error) {
 	b := model.OptionOrderInput{
 		Account:     c.Account.Url,
-		Direction:   o.Direction,
-		TimeInForce: o.TimeInForce,
+		Direction:   &o.Direction,
+		TimeInForce: &o.TimeInForce,
 		Legs: []model.Leg{{
 			Option:         q.Url,
-			RatioQuantity:  "1",
-			Side:           o.Side,
-			PositionEffect: "open",
+			RatioQuantity:  pointer.ToString("1"),
+			Side:           &o.Side,
+			PositionEffect: pointer.ToString("open"),
 		}},
-		Trigger:  o.Trigger,
-		Type:     o.Type,
-		Quantity: fmt.Sprintf("%f", o.Quantity),
-		Price:    fmt.Sprintf("%f", o.Price),
-		RefId:    uuid.New().String(),
+		Trigger:  &o.Trigger,
+		Type:     &o.Type,
+		Quantity: pointer.ToString(fmt.Sprintf("%f", o.Quantity)),
+		Price:    pointer.ToString(fmt.Sprintf("%f", o.Price)),
+		RefId:    pointer.ToString(uuid.New().String()),
 	}
 
 	if o.Side != model.BUY {
-		b.Legs[0].PositionEffect = "close"
+		b.Legs[0].PositionEffect = pointer.ToString("close")
 	}
 
 	bs, err := json.Marshal(b)
@@ -76,7 +77,7 @@ func (c *Client) GetOptionsOrders(ctx context.Context) (*[]model.OptionOrder, er
 	}
 
 	rs = append(rs, results.Results...)
-	pager := Pager{Next: results.Next, Previous: results.Previous}
+	pager := Pager{Next: *results.Next, Previous: *results.Previous}
 	for pager.HasMore() {
 		err := pager.GetNext(c, &results)
 		if err != nil {

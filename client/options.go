@@ -51,7 +51,7 @@ func (d *Date) UnmarshalJSON(bs []byte) error {
 func (c *Client) GetOptionChains(ctx context.Context, is ...*model.InstrumentData) ([]model.OptionChain, error) {
 	s := []string{}
 	for _, inst := range is {
-		s = append(s, inst.Id)
+		s = append(s, *inst.Id)
 	}
 
 	rs := make([]model.OptionChain, 0)
@@ -64,7 +64,7 @@ func (c *Client) GetOptionChains(ctx context.Context, is ...*model.InstrumentDat
 	}
 
 	rs = append(rs, results.Results...)
-	pager := Pager{Next: results.Next, Previous: results.Previous}
+	pager := Pager{Next: *results.Next, Previous: *results.Previous}
 	for pager.HasMore() {
 		err := pager.GetNext(c, &rs)
 		if err != nil {
@@ -106,7 +106,7 @@ func (c *Client) GetOptionsInstrument(ctx context.Context, o model.OptionChain, 
 	}
 
 	rs = append(rs, results.Results...)
-	pager := Pager{Next: results.Next, Previous: results.Previous}
+	pager := Pager{Next: *results.Next, Previous: *results.Previous}
 	for pager.HasMore() {
 		err := pager.GetNext(c, &rs)
 		if err != nil {
@@ -127,9 +127,9 @@ func (c *Client) GetOptionsInstrument(ctx context.Context, o model.OptionChain, 
 func OIsForDate(os []*model.OptionInstrument, d Date) []*model.OptionInstrument {
 	out := make([]*model.OptionInstrument, 0, len(os)/6)
 	for i := range os {
-		parsedDate, err := time.Parse("01/02/06", os[i].ExpirationDate)
+		parsedDate, err := time.Parse("01/02/06", *os[i].ExpirationDate)
 		if err != nil {
-			parsedDate, err = time.Parse("2006-01-02", os[i].ExpirationDate)
+			parsedDate, err = time.Parse("2006-01-02", *os[i].ExpirationDate)
 			if err != nil {
 
 			}
@@ -146,7 +146,7 @@ func (c *Client) MarketData(opts ...model.OptionInstrument) ([]*model.MarketData
 	is := make([]string, len(opts))
 
 	for i, o := range opts {
-		is[i] = o.Url
+		is[i] = *o.Url
 	}
 
 	u, err := url.Parse(EPOptionQuote)
